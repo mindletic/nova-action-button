@@ -56,7 +56,7 @@ class ActionButton extends Field
     }
 
     /**
-     * Enable loading animation. 
+     * Enable loading animation.
      *
      * @param $callback
      */
@@ -95,5 +95,12 @@ class ActionButton extends Field
     public function buttonColor(string $buttonColor)
     {
         return $this->withMeta(compact('buttonColor'));
+    }
+
+    public function resource(string $resource): self
+    {
+        return $this->withMeta([
+            'resourceNameOverride' => $resource,
+        ]);
     }
 }

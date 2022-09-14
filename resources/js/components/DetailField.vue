@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { Errors, FormField, HandlesValidationErrors, InteractsWithResourceInformation } from 'laravel-nova'
+import {Errors, FormField, HandlesValidationErrors, InteractsWithResourceInformation} from 'laravel-nova'
 
 export default {
     mixins: [FormField, HandlesValidationErrors, InteractsWithResourceInformation],
@@ -79,22 +79,24 @@ export default {
          * Execute the selected action.
          */
         executeAction() {
-            this.working = true
+          this.working = true
 
-            if (this.selectedResources.length == 0) {
-                alert(this.__('Please select a resource to perform this action on.'))
-                return
-            }
+          if (this.selectedResources.length == 0) {
+            alert(this.__('Please select a resource to perform this action on.'))
+            return
+          }
 
-            Nova.request({
-                method: 'post',
-                url: this.endpoint || `/nova-api/${this.resourceName}/action`,
-                params: this.actionRequestQueryString,
-                data: this.actionFormData(),
-            })
+          const resourceName = this.field.resourceNameOverride ? this.field.resourceNameOverride : this.resourceName;
+
+          Nova.request({
+            method: 'post',
+            url: this.endpoint || `/nova-api/${resourceName}/action`,
+            params: this.actionRequestQueryString,
+            data: this.actionFormData(),
+          })
             .then(response => {
-                this.confirmActionModalOpened = false
-                this.handleActionResponse(response.data)
+              this.confirmActionModalOpened = false
+              this.handleActionResponse(response.data)
                 this.working = false
             })
             .catch(error => {

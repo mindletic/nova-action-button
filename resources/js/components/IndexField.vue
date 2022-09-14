@@ -31,12 +31,7 @@
 </template>
 
 <script>
-import {
-  Errors,
-  FormField,
-  HandlesValidationErrors,
-  InteractsWithResourceInformation,
-} from "laravel-nova";
+import {Errors, FormField, HandlesValidationErrors, InteractsWithResourceInformation,} from "laravel-nova";
 
 import Loading from "./Loading";
 
@@ -100,9 +95,11 @@ export default {
         return;
       }
 
+      const resourceName = this.field.resourceNameOverride ? this.field.resourceNameOverride : this.resourceName;
+
       Nova.request({
         method: "post",
-        url: this.endpoint || `/nova-api/${this.resourceName}/action`,
+        url: this.endpoint || `/nova-api/${resourceName}/action`,
         params: this.actionRequestQueryString,
         data: this.actionFormData(),
       })
