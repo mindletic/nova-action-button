@@ -16,8 +16,12 @@ class ActionButtonFieldServiceProvider extends ServiceProvider
     public function boot()
     {
         Nova::serving(function (ServingNova $event) {
-            Nova::script('nova-action-button', __DIR__.'/../dist/js/field.js');
-            Nova::style('nova-action-button', __DIR__.'/../dist/css/field.css');
+            $mixManifest = json_decode(file_get_contents(__DIR__ . '/../dist/mix-manifest.json'), true);
+            $script = explode('=', $mixManifest['/js/field.js'])[1];
+            $style = explode('=', $mixManifest['/css/field.css'])[1];
+
+            Nova::script('nova-action-button-' . $script, __DIR__ . '/../dist/js/field.js');
+            Nova::style('nova-action-button-' . $style, __DIR__ . '/../dist/css/field.css');
         });
     }
 
