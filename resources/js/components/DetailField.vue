@@ -7,8 +7,8 @@
                 :disabled="field.readonly"
                 :style="`background-color: ${field.buttonColor} !important`"
             >
-              <span>{{ buttonText }}</span>
-              <component v-if="svg" :is="svg"></component>
+                <span>{{ buttonText }}</span>
+                <component v-if="svg" :is="svg"></component>
             </button>
 
             <!-- Action Confirmation Modal -->
@@ -37,26 +37,26 @@ export default {
     mixins: [FormField, HandlesValidationErrors, InteractsWithResourceInformation],
 
     props: {
-      resource: String,
-      resourceName: String,
-      resourceId: Number,
-      field: Object,
-      queryString: {
-        type: Object,
-        default: () => ({
-          currentSearch: '',
-          encodedFilters: '',
-          currentTrashed: '',
-          viaResource: '',
-          viaResourceId: '',
-          viaRelationship: '',
-        }),
-      },
+        resource: String,
+        resourceName: String,
+        resourceId: Number,
+        field: Object,
+        queryString: {
+            type: Object,
+            default: () => ({
+                currentSearch: '',
+                encodedFilters: '',
+                currentTrashed: '',
+                viaResource: '',
+                viaResourceId: '',
+                viaRelationship: '',
+            }),
+        },
     },
 
     data: () => ({
-      working: false,
-      confirmActionModalOpened: false,
+        working: false,
+        confirmActionModalOpened: false,
     }),
 
     methods: {
@@ -79,34 +79,34 @@ export default {
          * Execute the selected action.
          */
         executeAction() {
-          this.working = true
+            this.working = true
 
-          if (this.selectedResources.length == 0) {
-            alert(this.__('Please select a resource to perform this action on.'))
-            return
-          }
+            if (this.selectedResources.length == 0) {
+                alert(this.__('Please select a resource to perform this action on.'))
+                return
+            }
 
-          const resourceName = this.field.resourceNameOverride ? this.field.resourceNameOverride : this.resourceName;
+            const resourceName = this.field.resourceNameOverride ? this.field.resourceNameOverride : this.resourceName;
 
-          Nova.request({
-            method: 'post',
-            url: this.endpoint || `/nova-api/${resourceName}/action`,
-            params: this.actionRequestQueryString,
-            data: this.actionFormData(),
-          })
-            .then(response => {
-              this.confirmActionModalOpened = false
-              this.handleActionResponse(response.data)
-                this.working = false
+            Nova.request({
+                method: 'post',
+                url: this.endpoint || `/nova-api/${resourceName}/action`,
+                params: this.actionRequestQueryString,
+                data: this.actionFormData(),
             })
-            .catch(error => {
-                this.working = false
+                .then(response => {
+                    this.confirmActionModalOpened = false
+                    this.handleActionResponse(response.data)
+                    this.working = false
+                })
+                .catch(error => {
+                    this.working = false
 
-                if (error.response.status == 422) {
-                    this.errors = new Errors(error.response.data.errors)
-                    Nova.error(this.__('There was a problem executing the action.'))
-                }
-            })
+                    if (error.response.status == 422) {
+                        this.errors = new Errors(error.response.data.errors)
+                        Nova.error(this.__('There was a problem executing the action.'))
+                    }
+                })
         },
 
         /**
@@ -127,9 +127,14 @@ export default {
          */
         handleActionResponse(data) {
             try {
-              this.$parent.$parent.$children[2].$emit('actionExecuted')
+                this.$parent.$parent.$children[2].$emit('actionExecuted')
             } catch (e) {
-              // Somehow didn't work. We continue so that the response is processed anyway.
+                // Trying to run in context of a panel
+                try {
+                    this.$parent.$parent.$parent.$children[2].$children[2].$emit('actionExecuted')
+                } catch (e) {
+                }
+                // Somehow didn't work. We continue so that the response is processed anyway.
             }
             if (data.message) {
                 Nova.$emit('action-executed')
@@ -173,13 +178,13 @@ export default {
          */
         actionRequestQueryString() {
             return {
-            action: this.selectedAction.uriKey,
-            search: this.queryString.currentSearch,
-            filters: this.queryString.encodedFilters,
-            trashed: this.queryString.currentTrashed,
-            viaResource: this.queryString.viaResource,
-            viaResourceId: this.queryString.viaResourceId,
-            viaRelationship: this.queryString.viaRelationship,
+                action: this.selectedAction.uriKey,
+                search: this.queryString.currentSearch,
+                filters: this.queryString.encodedFilters,
+                trashed: this.queryString.currentTrashed,
+                viaResource: this.queryString.viaResource,
+                viaResourceId: this.queryString.viaResourceId,
+                viaRelationship: this.queryString.viaRelationship,
             }
         },
 
@@ -188,7 +193,7 @@ export default {
         },
 
         svg() {
-          return this.field.svg || false;
+            return this.field.svg || false;
         }
     }
 }
